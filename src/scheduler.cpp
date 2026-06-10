@@ -1,3 +1,8 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Ferdinand ATI
+// VectOS — Lightweight preemptive RTOS for RP2040
+// https://github.com/Ferdinaelectro1/VectOS
+
 #include "vecos/scheduler.h"
 #include "pico/time.h"
 #include "hardware/structs/scb.h"

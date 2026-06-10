@@ -1,3 +1,8 @@
+@ SPDX-License-Identifier: MIT
+@ Copyright (c) 2026 Ferdinand ATI
+@ VectOS — Lightweight preemptive RTOS for RP2040
+@ https://github.com/Ferdinaelectro1/VectOS
+
 .syntax unified    @ Mandatory for using modern ARM syntax
 .thumb             @ Mandatory to compile in Thumb mode for the Cortex-M0+
 .section .text     @ Indicates that what follows is executable code
