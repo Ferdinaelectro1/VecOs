@@ -5,6 +5,7 @@
 
 #define LED1 28
 #define LED2 27
+#define LED3 26
 
 static void delay_software(volatile uint32_t count) {
     while(count--) {
@@ -19,9 +20,9 @@ void Task1 (void* arg) {
 
     while (true) {
         gpio_put(LED1, 1);
-        delay_software(2500000);
+        vecos::sleep_ms(1000);
         gpio_put(LED1, 0);
-        delay_software(2500000);  
+        vecos::sleep_ms(1000); 
     }
 }
 
@@ -31,20 +32,35 @@ void Task2(void* arg) {
     gpio_set_dir(LED2, GPIO_OUT);
     while (true) {
         gpio_put(LED2, 0);
-        delay_software(5000000);
+        vecos::sleep_ms(500);
         gpio_put(LED2, 1);
-        delay_software(5000000);
+        vecos::sleep_ms(500);
+    }
+}
+
+void Task3(void* arg) {
+   (void)arg; // Évite le warning d'inutilisation 
+    gpio_init(LED3);
+    gpio_set_dir(LED3, GPIO_OUT);
+    while (true) {
+        gpio_put(LED3, 0);
+        vecos::sleep_ms(250);
+        gpio_put(LED3, 1);
+        delay_software(250);
     }
 }
 
 vecos::Task<1024> task1(Task1);
 vecos::Task<1024> task2(Task2);
+vecos::Task<1024> task3(Task3);
+
 
 vecos::Scheduler os;
 
 int main() {
     os.add_task(task1);
     os.add_task(task2);
+    os.add_task(task3);
     os.start();
     while(1) {
         printf("Erreur start scheduler !\n");

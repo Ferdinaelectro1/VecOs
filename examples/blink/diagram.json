@@ -25,6 +25,14 @@
       "left": 160.2,
       "rotate": 90,
       "attrs": { "color": "red" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led3",
+      "top": 181.2,
+      "left": 169.8,
+      "rotate": 90,
+      "attrs": { "color": "red" }
     }
   ],
   "connections": [
@@ -33,7 +41,9 @@
     [ "led2:A", "pico:GP28", "green", [ "h-57.6", "v-9.6" ] ],
     [ "led1:A", "pico:GP27", "green", [ "h-57.6", "v-48" ] ],
     [ "pico:GND.8", "led2:C", "black", [ "h0" ] ],
-    [ "led2:C", "led1:C", "green", [ "h0", "v-47.6", "h76.8", "v86.4", "h-76.8" ] ]
+    [ "led2:C", "led1:C", "green", [ "h0", "v-47.6", "h76.8", "v86.4", "h-76.8" ] ],
+    [ "led1:C", "led3:C", "green", [ "h9.6", "v-9.2", "h57.6", "v48", "h-76.8", "v28.8" ] ],
+    [ "pico:GP26", "led3:A", "green", [ "h24", "v121.65" ] ]
   ],
   "dependencies": {}
 }
