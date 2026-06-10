@@ -5,15 +5,20 @@
 
 #pragma once
 #include "utils.h"
+#include "platform_timer.h"
 
 #include <stdint.h>
 
 extern "C" void vTaskSwitchContext();
 
+enum class TaskState { READY, BLOCKED };
+
 typedef struct {
   uint32_t *stack_ptr;
   uint32_t *stack_base;
   uint32_t  stack_size;
+  uint64_t  wake_up_time = 0;
+  TaskState state = TaskState::READY;
 } TCB;
 
 static void task_init(void (*task_func_ptr)(void *args),TCB *task_tcb) {
@@ -73,6 +78,8 @@ namespace vecos {
           uint32_t _stack[stack_size];
     };
 
+    void sleep_ms(uint32_t ms);
+
     class Scheduler {
         
         public: 
@@ -92,8 +99,10 @@ namespace vecos {
           uint16_t _task_count;
           uint16_t _current_task_idx = 0;
           TaskBase *_tasks[HARD_MAX_TASK];
+          SystemTime *_sys_time = nullptr;
 
           friend void ::vTaskSwitchContext();
+          friend void sleep_ms(uint32_t ms);
     };
     
 }
