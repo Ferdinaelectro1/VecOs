@@ -72,7 +72,7 @@ export PICO_SDK_PATH=/opt/pico-sdk   # adjust to your local installation
 ### Build
 
 ```bash
-git clone https://github.com/Ferdinaelectro1/VectOS.git
+git clone https://github.com/Ferdinaelectro1/VecOs.git
 cd VectOS
 mkdir build && cd build
 cmake ..
