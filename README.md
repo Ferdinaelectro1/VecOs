@@ -172,6 +172,8 @@ Your `#include` paths are configured automatically — no manual `include_direct
 
 ---
 
+![VectOS demo](assets/blink.gif)
+
 ## License
 
 MIT — free to use, fork, and build on top of.
