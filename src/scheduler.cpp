@@ -122,7 +122,7 @@ uint16_t vecos::Scheduler::task_count() const
     return _task_count;
 }
 
-void vecos::sleep_ms(uint32_t ms)
+void vecos::sleep_task_ms(uint32_t ms)
 {
     TCB *current = current_task_tcb_ptr;
     if (current && instance_scheduler && instance_scheduler->_sys_time) {

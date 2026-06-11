@@ -7,12 +7,6 @@
 #define LED2 27
 #define LED3 26
 
-static void delay_software(volatile uint32_t count) {
-    while(count--) {
-        __asm volatile("nop");
-    }
-}
-
 void Task1 (void* arg) {
    (void)arg; // Évite le warning d'inutilisation 
     gpio_init(LED1);
@@ -20,9 +14,9 @@ void Task1 (void* arg) {
 
     while (true) {
         gpio_put(LED1, 1);
-        vecos::sleep_ms(1000);
+        vecos::sleep_task_ms(1000);
         gpio_put(LED1, 0);
-        vecos::sleep_ms(1000); 
+        vecos::sleep_task_ms(1000); 
     }
 }
 
@@ -32,9 +26,9 @@ void Task2(void* arg) {
     gpio_set_dir(LED2, GPIO_OUT);
     while (true) {
         gpio_put(LED2, 0);
-        vecos::sleep_ms(500);
+        vecos::sleep_task_ms(500);
         gpio_put(LED2, 1);
-        vecos::sleep_ms(500);
+        vecos::sleep_task_ms(500);
     }
 }
 
@@ -44,9 +38,9 @@ void Task3(void* arg) {
     gpio_set_dir(LED3, GPIO_OUT);
     while (true) {
         gpio_put(LED3, 0);
-        vecos::sleep_ms(250);
+        vecos::sleep_task_ms(250);
         gpio_put(LED3, 1);
-        delay_software(250);
+        vecos::sleep_task_ms(250);
     }
 }
 

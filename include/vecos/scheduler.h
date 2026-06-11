@@ -78,7 +78,7 @@ namespace vecos {
           uint32_t _stack[stack_size];
     };
 
-    void sleep_ms(uint32_t ms);
+    void sleep_task_ms(uint32_t ms);
 
     class Scheduler {
         
@@ -102,7 +102,7 @@ namespace vecos {
           SystemTime *_sys_time = nullptr;
 
           friend void ::vTaskSwitchContext();
-          friend void sleep_ms(uint32_t ms);
+          friend void sleep_task_ms(uint32_t ms);
     };
     
 }
