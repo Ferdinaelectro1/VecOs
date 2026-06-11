@@ -3,22 +3,18 @@
 // VectOS — Lightweight preemptive RTOS for RP2040
 // https://github.com/Ferdinaelectro1/VectOS
 
-#include "pico/time.h"
-#include "hardware/structs/scb.h"
-
 #include "vecos/scheduler.h"
 #include "vecos/platform_timer.h"
+#include "vecos/port.h"
 
 extern "C" {
-    void SVC_Handler(void);
-    void PendSV_Handler(void);
     void start_first_task(TCB **);
 };
 
 static void vecos_idle_task_fn(void* arg) {
     (void)arg;
     while (true) {
-        __asm volatile("wfi"); 
+        vecos::port::put_cpu_to_sleep(); 
     }
 }
 
@@ -27,7 +23,6 @@ static vecos::Task<128> idle_task(vecos_idle_task_fn);
 TCB* current_task_tcb_ptr = nullptr; //global pour l'asm
 vecos::Scheduler* instance_scheduler = nullptr; //global pour l'asm
 
-struct repeating_timer timer;
 
 vecos::Scheduler::Scheduler() : _task_count(0){
     instance_scheduler = this;
@@ -84,36 +79,11 @@ extern "C" void vTaskSwitchContext() {
     current_task_tcb_ptr = instance_scheduler->_tasks[0]->get_tcb();
 }
 
-static bool repeating_timer_callback(struct repeating_timer *) {
-    __asm volatile("svc #0");//déclenche une interruption qui va appeler le pendCV
-    return true;
-}
-
-static void initSchedulerTimer_andPendCV () {
-    add_repeating_timer_ms(-5,repeating_timer_callback,NULL,&timer);
-
-    // --- INJECTION BRUTE DANS LA TABLE VTOR ---
-    // On récupère l'adresse de la table des vecteurs actuellement utilisée en RAM
-    uint32_t *vtor_table = (uint32_t *)scb_hw->vtor;
-    
-    // Case 11 = SVC (Supervisor Call)
-    vtor_table[11] = (uint32_t)SVC_Handler;
-    
-    // Case 14 = PendSV (Pendable Service Call)
-    vtor_table[14] = (uint32_t)PendSV_Handler;
-    
-    // Adresse du registre SHPR3 (System Handler Priority Register 3)
-    volatile uint32_t *shpr3 = (volatile uint32_t *)0xE000ED20;
-
-    // On force la priorité de PendSV (bits 16-23) à 0xC0 (priorité la plus basse sur M0+)
-    *shpr3 = (*shpr3 & 0xFF00FFFF) | 0x00C00000;
-}
-
 void vecos::Scheduler::start()
 {
     _current_task_idx = (_task_count > 1) ? 1 : 0;
     current_task_tcb_ptr = _tasks[_current_task_idx]->get_tcb();// get_tcb retourne déjà un * vers un TCB
-    initSchedulerTimer_andPendCV();
+    vecos::port::init_hardware_context();//init hardware interrupt and ticks timer
     start_first_task(&current_task_tcb_ptr);
 }
 
@@ -129,6 +99,6 @@ void vecos::sleep_task_ms(uint32_t ms)
         uint64_t now = instance_scheduler->_sys_time->get_ticks_us();
         current->wake_up_time = now + (static_cast<uint64_t>(ms) * 1000);
         current->state = TaskState::BLOCKED;        
-        __asm volatile("svc #0");
+        vecos::port::yield_cpu();
     }
 }
