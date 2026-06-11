@@ -21,7 +21,7 @@ typedef struct {
   TaskState state = TaskState::READY;
 } TCB;
 
-static void task_init(void (*task_func_ptr)(void *args),TCB *task_tcb) {
+static void task_init(void (*task_func_ptr)(void *),void *args,TCB *task_tcb) {
   uint32_t *sp = task_tcb->stack_base; //on initialise le pointeur de pile au sommet de la pile
   *sp-- = 0x01000000; //on charge xpsr l'état du reg de statut xpsr puis on décrémente le pointeur de pile
   *sp-- = (uint32_t )task_func_ptr;//on charge pc en y mettant l'adresse de la fonction de cette tâche
@@ -30,7 +30,7 @@ static void task_init(void (*task_func_ptr)(void *args),TCB *task_tcb) {
   *sp-- = 0;                        // R3
   *sp-- = 0;                        // R2
   *sp-- = 0;                        // R1
-  *sp-- = 0;                        // R0
+  *sp-- = (uint32_t)args;           // R0
 
   *sp-- = 0;                        // R11
   *sp-- = 0;                        // R10
@@ -55,10 +55,9 @@ namespace vecos {
           }
 
         protected: 
-          TaskBase(uint32_t* stack_top,uint32_t size,void (*task_fn)(void *arg), void *arg = nullptr) {
+          TaskBase(uint32_t* stack_top,uint32_t size) {
             _tcb.stack_base = stack_top;
             _tcb.stack_size = size;
-             task_init(task_fn,&_tcb);
           }
 
         private:
@@ -68,10 +67,10 @@ namespace vecos {
     template<uint16_t stack_size = 1024>
     class Task : public TaskBase {
         public:
-          Task(void (*task_fn)(void *), void *arg = nullptr) : 
-               TaskBase(&_stack[stack_size - 1],stack_size,task_fn,arg) 
+          Task(void (*task_fn)(void *),void *arg = nullptr) : 
+          TaskBase(&_stack[stack_size-1],stack_size)
           {
-            
+            task_init(task_fn,arg,this->get_tcb());
           } 
 
         private:
