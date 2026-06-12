@@ -18,5 +18,11 @@ namespace vecos {
         // Met le CPU au repos (basse consommation) dans la tâche Idle
         void put_cpu_to_sleep();
 
+        //enregistre et désactive toutes les interruptions dans le cpu cible
+        uint32_t save_and_disable_interrupts();
+        
+        //réactive les interruptions das le cpu cible
+        void restore_interrupts(uint32_t status);
+
     } // namespace port
 } // namespace vecos
