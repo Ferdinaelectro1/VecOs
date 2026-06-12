@@ -7,7 +7,7 @@
 #include "pico/time.h"
 #include "vecos/port.h"
 
-#define TIMER_TICK 5
+#define TIMER_TICK 1
 
 extern "C" {
     void SVC_Handler(void);
@@ -49,4 +49,27 @@ void vecos::port::yield_cpu() {
 
 void vecos::port::put_cpu_to_sleep() {
     __asm volatile("wfi");
+}
+
+uint32_t vecos::port::save_and_disable_interrupts()
+{
+    uint32_t result;
+    __asm__ volatile (
+        "mrs %0, primask \n"
+        "cpsid i         \n"
+        : "=l" (result)
+        :
+        : "memory"
+    );
+    return result;
+}
+
+void vecos::port::restore_interrupts(const uint32_t status)
+{
+    __asm__ volatile (
+        "msr primask, %0 \n"
+        :
+        : "l" (status)
+        : "memory"
+    );
 }
