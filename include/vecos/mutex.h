@@ -8,9 +8,6 @@
 
 #include "vecos/scheduler.h"
 
-#define LED 27
-#define LED2 28
-
 namespace vecos {
     class Mutex {
         public:
