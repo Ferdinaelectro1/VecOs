@@ -20,13 +20,17 @@ void vecos::Mutex::lock()
 {
     //we disable hardware interrupt doing mutex operation (that is atomics operation)
     uint32_t inter_state = vecos::port::save_and_disable_interrupts();
+    bool already_waiting = false;
 
     //if mutex is already lock 
     while(_locked){
-        if(current_task_tcb_ptr->state != TaskState::BLOCKED) {
-            _waiting_mutex_tcb[_waiting_mutex_tcb_count++] = current_task_tcb_ptr;
-            current_task_tcb_ptr->state = TaskState::BLOCKED; //this task begin slepping
+        if(!already_waiting) {
+            if(_waiting_mutex_tcb_count < 16) { // Sécurité anti-débordement
+                _waiting_mutex_tcb[_waiting_mutex_tcb_count++] = current_task_tcb_ptr;
+                already_waiting = true;
+            }
         }
+        current_task_tcb_ptr->state = TaskState::BLOCKED;
         vecos::port::restore_interrupts(inter_state); //restore interrupt
         vecos::port::yield_cpu(); //we yield cpu to continue running another task
         inter_state = vecos::port::save_and_disable_interrupts(); //we relock interrupt befor verifie mutex
