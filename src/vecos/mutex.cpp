@@ -10,12 +10,6 @@ vecos::Mutex::Mutex() {
     _owner  = nullptr;
 }
 
-void vecos::Mutex::init_debug()
-{
-    gpio_init(LED);
-    gpio_set_dir(LED,GPIO_OUT);
-}
-
 void vecos::Mutex::lock()
 {
     //we disable hardware interrupt doing mutex operation (that is atomics operation)
@@ -36,7 +30,7 @@ void vecos::Mutex::lock()
         inter_state = vecos::port::save_and_disable_interrupts(); //we relock interrupt befor verifie mutex
     } 
  
-    gpio_put(LED,0);
+
     _locked = true;
     _owner = current_task_tcb_ptr;
     
@@ -44,7 +38,6 @@ void vecos::Mutex::lock()
 }
 
 void vecos::Mutex::unlock() {
-    gpio_put(LED,1);
     uint32_t inter_state = vecos::port::save_and_disable_interrupts();
     _locked = false;
     _owner = nullptr;
