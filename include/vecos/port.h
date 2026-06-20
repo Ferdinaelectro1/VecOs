@@ -6,6 +6,8 @@
 #pragma once
 #include <stdint.h>
 
+struct TCB;
+
 namespace vecos {
     namespace port {
 
@@ -23,6 +25,9 @@ namespace vecos {
         
         //réactive les interruptions das le cpu cible
         void restore_interrupts(uint32_t status);
+
+        //Init system stack
+        void task_init(void (*task_func_ptr)(void *),void *args,TCB *task_tcb);
 
     } // namespace port
 } // namespace vecos
