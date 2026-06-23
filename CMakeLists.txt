@@ -30,3 +30,4 @@ target_link_libraries(vecos PUBLIC
 
 add_subdirectory(examples/blink)
 add_subdirectory(examples/mutex_and_print)
+add_subdirectory(examples/producer_consumer)

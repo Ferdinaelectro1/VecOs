@@ -1,0 +1,5 @@
+add_executable(producer_consumer main.cpp)
+
+target_link_libraries(producer_consumer vecos)
+
+pico_add_extra_outputs(producer_consumer)
