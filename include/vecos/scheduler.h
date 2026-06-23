@@ -14,12 +14,15 @@ extern "C" void vTaskSwitchContext();
 
 enum class TaskState { READY, BLOCKED };
 
+//Don't modifiy this struct order because asm file use 
+//this order to acces stack_ptr
+//If you want new parameter put this at end
 struct TCB {
-  uint64_t  wake_up_time = 0;
   uint32_t *stack_ptr;
   uint32_t *stack_base;
   uint32_t  stack_size;
   TaskState state = TaskState::READY;
+  uint64_t  wake_up_time = 0;
 };
 
 
