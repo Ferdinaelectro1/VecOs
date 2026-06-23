@@ -12,7 +12,7 @@
 
 extern "C" void vTaskSwitchContext();
 
-enum class TaskState { READY, BLOCKED };
+enum class TaskState { READY,SLEEPING,BLOCKED };
 
 //Don't modifiy this struct order because asm file use 
 //this order to acces stack_ptr

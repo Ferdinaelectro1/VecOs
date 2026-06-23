@@ -60,8 +60,10 @@ extern "C" void vTaskSwitchContext() {
 
             TCB* tcb = instance_scheduler->_tasks[next_idx]->get_tcb();
 
-            // Si la tâche était bloquée, on vérifie si l'heure du réveil a sonné
-            if (tcb->state == TaskState::BLOCKED) {
+            if(tcb->state == TaskState::BLOCKED) continue;
+
+            // Si la tâche dormais, on vérifie si l'heure du réveil a sonné
+            if (tcb->state == TaskState::SLEEPING) {
                 if (current_time >= tcb->wake_up_time) {
                     tcb->state = TaskState::READY;
                 }
@@ -98,7 +100,7 @@ void vecos::sleep_task_ms(uint32_t ms)
     if (current && instance_scheduler && instance_scheduler->_sys_time) {
         uint64_t now = instance_scheduler->_sys_time->get_ticks_us();
         current->wake_up_time = now + (static_cast<uint64_t>(ms) * 1000);
-        current->state = TaskState::BLOCKED;        
+        current->state = TaskState::SLEEPING;        
         vecos::port::yield_cpu();
     }
 }
