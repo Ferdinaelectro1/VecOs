@@ -23,6 +23,7 @@ struct TCB {
   uint32_t  stack_size;
   TaskState state = TaskState::READY;
   uint64_t  wake_up_time = 0;
+  TCB       *next_blocked;
 };
 
 

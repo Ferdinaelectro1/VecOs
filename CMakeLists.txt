@@ -13,6 +13,7 @@ pico_sdk_init()
 add_library(vecos STATIC
     src/vecos/scheduler.cpp
     src/vecos/mutex.cpp
+    src/vecos/semaphore.cpp
     src/arch/rp2040_port.cpp
     src/ports/rp2040_init.S
     src/ports/rp2040_context_switch.S
