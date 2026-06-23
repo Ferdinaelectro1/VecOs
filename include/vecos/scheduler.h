@@ -15,10 +15,10 @@ extern "C" void vTaskSwitchContext();
 enum class TaskState { READY, BLOCKED };
 
 struct TCB {
+  uint64_t  wake_up_time = 0;
   uint32_t *stack_ptr;
   uint32_t *stack_base;
   uint32_t  stack_size;
-  uint64_t  wake_up_time = 0;
   TaskState state = TaskState::READY;
 };
 
