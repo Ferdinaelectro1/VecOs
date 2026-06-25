@@ -1,0 +1,5 @@
+[wokwi]
+version = 1
+firmware = "../../build/examples/CoreRacer_game/CoreRacer_game.uf2"
+elf = "../../build/examples/CoreRacer_game/CoreRacer_game.elf"
+gdbServerPort = 3333
