@@ -1,0 +1,5 @@
+add_executable(message_exchanger main.cpp)
+
+target_link_libraries(message_exchanger vecos)
+
+pico_add_extra_outputs(message_exchanger)
