@@ -1,6 +1,6 @@
 # VectOS
 
-> Lightweight preemptive RTOS micro-kernel for the RP2040, written in ARM Cortex-M0+ Assembly and Modern C++17.
+> Lightweight preemptive RTOS micro-kernel, written in ARM Cortex-M0+ Assembly and Modern C++17.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform: RP2040](https://img.shields.io/badge/Platform-RP2040-red.svg)](https://www.raspberrypi.com/products/rp2040/)
