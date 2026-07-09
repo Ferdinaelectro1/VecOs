@@ -11,7 +11,7 @@ void Sender() {
         queue.send(cnt);
         printf("[Sender] Sent %d, space left: %size...\n", cnt);
         cnt++;
-        vecos::sleep_task_ms(100);
+        vecos::sleep_task(100);
     }
 }
 
@@ -20,7 +20,7 @@ void Receiver() {
         int read;
         queue.receive(read);
         printf("         [Receiver] Read = %d\n", read);
-        vecos::sleep_task_ms(300);
+        vecos::sleep_task(300);
     }
 }
 

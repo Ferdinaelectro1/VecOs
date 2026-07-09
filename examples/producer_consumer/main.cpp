@@ -13,7 +13,7 @@ void Producer_A() {
         bus++;
         printf("[Prod A] Created data: %d\n", bus);
         semaphore.signal();
-        vecos::sleep_task_ms(400); 
+        vecos::sleep_task(400); 
     }    
 }
 
@@ -22,7 +22,7 @@ void Producer_B() {
         bus++;
         printf("[Prod B] Created data: %d\n", bus);
         semaphore.signal();
-        vecos::sleep_task_ms(600); 
+        vecos::sleep_task(600); 
     }    
 }
 
@@ -30,7 +30,7 @@ void Consumer_1() {
     while (1) {
         semaphore.wait();
         printf("  -> [Cons 1] Handled value = %d\n", bus);
-        vecos::sleep_task_ms(20); 
+        vecos::sleep_task(20); 
     }   
 }
 
@@ -38,7 +38,7 @@ void Consumer_2() {
     while (1) {
         semaphore.wait();
         printf("  -> [Cons 2] Handled value = %d\n", bus);
-        vecos::sleep_task_ms(20);
+        vecos::sleep_task(20);
     }   
 }
 
@@ -46,7 +46,7 @@ void Consumer_3() {
     while (1) {
         semaphore.wait();
         printf("  -> [Cons 3] Handled value = %d\n", bus);
-        vecos::sleep_task_ms(20);
+        vecos::sleep_task(20);
     }   
 }
 
@@ -55,9 +55,9 @@ void blink_task() {
     gpio_set_dir(LED, GPIO_OUT);
     while(1) {
         gpio_put(LED, 1);
-        vecos::sleep_task_ms(100);
+        vecos::sleep_task(100);
         gpio_put(LED, 0);
-        vecos::sleep_task_ms(100);
+        vecos::sleep_task(100);
     }
 }
 

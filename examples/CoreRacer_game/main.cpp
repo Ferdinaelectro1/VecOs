@@ -108,7 +108,7 @@ void Task_Input() {
         if (last_L && !L) game_queue.send(ButtonEvent::MOVE_LEFT);
         if (last_R && !R) game_queue.send(ButtonEvent::MOVE_RIGHT);
         last_L = L; last_R = R;
-        vecos::sleep_task_ms(20);
+        vecos::sleep_task(20);
     }
 }
 

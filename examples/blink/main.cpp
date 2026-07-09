@@ -14,9 +14,9 @@ void Task1 (void* arg) {
 
     while (true) {
         gpio_put(LED1, 1);
-        vecos::sleep_task_ms(1000);
+        vecos::sleep_task(1000ms);
         gpio_put(LED1, 0);
-        vecos::sleep_task_ms(1000); 
+        vecos::sleep_task(1000ms); 
     }
 }
 
@@ -26,9 +26,9 @@ void Task2(void* arg) {
     gpio_set_dir(LED2, GPIO_OUT);
     while (true) {
         gpio_put(LED2, 0);
-        vecos::sleep_task_ms(500);
+        vecos::sleep_task(500ms);
         gpio_put(LED2, 1);
-        vecos::sleep_task_ms(500);
+        vecos::sleep_task(500ms);
     }
 }
 
@@ -38,9 +38,9 @@ void Task3(void* arg) {
     gpio_set_dir(LED3, GPIO_OUT);
     while (true) {
         gpio_put(LED3, 0);
-        vecos::sleep_task_ms(250);
+        vecos::sleep_task(250ms);
         gpio_put(LED3, 1);
-        vecos::sleep_task_ms(250);
+        vecos::sleep_task(250ms);
     }
 }
 

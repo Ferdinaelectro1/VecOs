@@ -94,13 +94,17 @@ uint16_t vecos::Scheduler::task_count() const
     return _task_count;
 }
 
-void vecos::sleep_task_ms(uint32_t ms)
+void vecos::sleep_task(::std::chrono::milliseconds duration)
 {
     TCB *current = current_task_tcb_ptr;
     if (current && instance_scheduler && instance_scheduler->_sys_time) {
         uint64_t now = instance_scheduler->_sys_time->get_ticks_us();
-        current->wake_up_time = now + (static_cast<uint64_t>(ms) * 1000);
+        current->wake_up_time = now + (static_cast<uint64_t>(duration.count()) * 1000);
         current->state = TaskState::SLEEPING;        
         vecos::port::yield_cpu();
     }
+}
+void vecos::sleep_task(uint32_t ms)
+{
+    sleep_task(::std::chrono::milliseconds(ms));
 }

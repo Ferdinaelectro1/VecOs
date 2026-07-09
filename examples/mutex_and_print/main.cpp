@@ -18,7 +18,7 @@ void print1(void *arg) {
         }
         
         mutex.unlock();
-        vecos::sleep_task_ms(500); // Laisse un vrai temps d'observation de 500ms !
+        vecos::sleep_task(500); // Laisse un vrai temps d'observation de 500ms !
     }    
 }
 
@@ -31,7 +31,7 @@ void print3(void *arg) {
             sleep_ms(100);
         }
         mutex.unlock();
-        vecos::sleep_task_ms(500); // Laisse un vrai temps d'observation de 500ms !
+        vecos::sleep_task(500); // Laisse un vrai temps d'observation de 500ms !
     }    
 }
 
@@ -46,7 +46,7 @@ void print2(void *arg) {
         }
         
         mutex.unlock();
-        vecos::sleep_task_ms(500); // Laisse la Task 1 s'exprimer pendant 500ms
+        vecos::sleep_task(500); // Laisse la Task 1 s'exprimer pendant 500ms
     }    
 }
 

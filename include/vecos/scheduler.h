@@ -9,6 +9,8 @@
 #include "port.h"
 
 #include <stdint.h>
+#include <chrono>
+using namespace std::chrono_literals;
 
 extern "C" void vTaskSwitchContext();
 
@@ -68,7 +70,8 @@ namespace vecos {
           uint32_t _stack[stack_size];
     };
 
-    void sleep_task_ms(uint32_t ms);
+    void sleep_task(::std::chrono::milliseconds duration);
+    void sleep_task(uint32_t ms);
 
     class Scheduler {
         
@@ -92,7 +95,7 @@ namespace vecos {
           SystemTime *_sys_time = nullptr;
 
           friend void ::vTaskSwitchContext();
-          friend void sleep_task_ms(uint32_t ms);
+          friend void sleep_task(::std::chrono::milliseconds duration);
     };
     
 }
