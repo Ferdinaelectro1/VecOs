@@ -25,8 +25,8 @@ namespace vecos {
 
         private:
            TCB *_owner = nullptr;
-           TCB *_waiting_mutex_tcb[16];
-           uint16_t _waiting_mutex_tcb_count = 0;
+           TCB *_head = nullptr;
+           TCB *_tail = nullptr;
            volatile bool _locked;
     };
 } //End vecos
