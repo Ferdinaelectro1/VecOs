@@ -4,13 +4,14 @@
 // https://github.com/Ferdinaelectro1/VectOS
 
 #pragma once
+#include <stdint.h>
+#include <chrono>
+using namespace std::chrono_literals;
+
 #include "utils.h"
 #include "platform_timer.h"
 #include "port.h"
 
-#include <stdint.h>
-#include <chrono>
-using namespace std::chrono_literals;
 
 extern "C" void vTaskSwitchContext();
 
