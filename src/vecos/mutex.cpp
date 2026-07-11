@@ -34,8 +34,8 @@ void vecos::Mutex::lock()
 
         while(_locked){
             current_task_tcb_ptr->state = TaskState::BLOCKED;
-            vecos::port::restore_interrupts(inter_state); //restore interrupt
             vecos::port::yield_cpu(); //we yield cpu to continue running another task
+            vecos::port::restore_interrupts(inter_state); //restore interrupt
             inter_state = vecos::port::save_and_disable_interrupts(); //we relock interrupt befor verifie mutex
         } 
     }
