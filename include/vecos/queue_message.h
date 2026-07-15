@@ -1,7 +1,7 @@
 #pragma once
 #include <cstddef>
 #include "vecos/port.h"
-#include "vecos/scheduler.h"
+#include "vecos/tcb.hpp"
 
 extern TCB* current_task_tcb_ptr;
 

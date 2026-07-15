@@ -5,7 +5,7 @@
 
 #pragma once
 #include <stdint.h>
-#include <vecos/scheduler.h>
+#include "vecos/tcb.hpp"
 
 namespace vecos {
     class Semaphore {

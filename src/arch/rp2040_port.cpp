@@ -6,7 +6,7 @@
 #include "hardware/structs/scb.h"
 #include "pico/time.h"
 #include "vecos/port.h"
-#include "vecos/scheduler.h"
+#include "vecos/tcb.hpp"
 
 #define TIMER_TICK 1
 
