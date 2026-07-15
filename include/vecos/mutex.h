@@ -7,6 +7,7 @@
 #define VECOS_MUTEX_H
 
 #include "vecos/tcb.hpp"
+#include "vecos/utils.h"
 
 namespace vecos {
     class Mutex {

@@ -21,16 +21,7 @@ void vecos::Mutex::lock()
     uint32_t inter_state = vecos::port::save_and_disable_interrupts();
 
     if(_locked) {
-        current_task_tcb_ptr->next_blocked = nullptr;
-        //if mutex is already lock 
-        
-        if(_head == nullptr) {
-            _head = current_task_tcb_ptr;
-            _tail = current_task_tcb_ptr;
-        }  else {
-            _tail->next_blocked = current_task_tcb_ptr;
-            _tail = current_task_tcb_ptr;
-        }
+        vecos::utils::append(_head,_tail,current_task_tcb_ptr);
 
         while(_locked){
             current_task_tcb_ptr->state = TaskState::BLOCKED;
@@ -51,13 +42,8 @@ void vecos::Mutex::unlock() {
     uint32_t inter_state = vecos::port::save_and_disable_interrupts();
     _locked = false;
     //we wake up a single task
-    if(_head != nullptr) {
-        TCB *task_to_wake = _head;
-        _head = _head->next_blocked;
-        if(_head == nullptr) _tail = nullptr;
-        task_to_wake->state = TaskState::READY;
-        task_to_wake->next_blocked = nullptr;
-    }
+    TCB *task_to_wake = vecos::utils::read_front(_head,_tail);
+    if(task_to_wake != nullptr) task_to_wake->state = TaskState::READY;
     vecos::port::restore_interrupts(inter_state); //after lock we restore hardware interrupt
 }
 
