@@ -28,8 +28,17 @@ target_link_libraries(vecos PUBLIC
     hardware_exception
 )
 
+#Tests utility
+enable_testing()
+add_executable(tcb_layout_test tests/tcb_layout_test.cpp)
+target_link_libraries(tcb_layout_test PRIVATE vecos)
+add_test(NAME TCBLayoutTest COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target tcb_layout_test)
+#end of tests utility
+
+#examples utility
 add_subdirectory(examples/blink)
 add_subdirectory(examples/mutex_and_print)
 add_subdirectory(examples/producer_consumer)
 add_subdirectory(examples/message_exchanger)
 add_subdirectory(examples/CoreRacer_game)
+#end of examples utility
