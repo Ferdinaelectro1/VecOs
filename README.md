@@ -103,9 +103,9 @@ void BlinkTask(void* arg) {
 
     while (true) {
         gpio_put(LED_PIN, 1);
-        for (volatile int i = 0; i < 2500000; i++);
+        vecos::sleep_task(500);
         gpio_put(LED_PIN, 0);
-        for (volatile int i = 0; i < 2500000; i++);
+        vecos::sleep_task(500);
     }
 }
 
