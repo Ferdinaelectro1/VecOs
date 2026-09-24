@@ -1,0 +1,25 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Installer les outils
+        run: sudo apt-get update && sudo apt-get install -y cmake build-essential
+
+      - name: Configurer
+        run: cmake -S tests -B build
+
+      - name: Compiler
+        run: cmake --build build -j
+
+      - name: Lancer les tests
+        run: ctest --test-dir build --output-on-failure
