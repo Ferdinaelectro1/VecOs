@@ -25,7 +25,10 @@ VectOS is a from-scratch RTOS micro-kernel targeting the **Raspberry Pi Pico (RP
 - **Pure round-robin scheduling** — execution time shared fairly and symmetrically among all registered tasks
 - **Type-safe static stack allocation** — `vecos::Task<StackSize>` allocates each task's stack at compile time, guaranteeing zero heap fragmentation and no runtime allocation failures
 - **Clean C++ API** — hides raw register manipulation behind a straightforward object-oriented interface
-
+- **Synchronization primitives** — lightweight `vecos::Mutex` and `vecos::Semaphore` for mutual exclusion and resource counting
+- **Message queues** — `vecos::Queue<T, N>` for passing typed messages between tasks with blocking send/receive
+- **Task sleep API** — `vecos::sleep_task(ms)` or `sleep_task(std::chrono::milliseconds)` to suspend the calling task for a duration
+- **Platform clock abstraction** — `vecos::SystemTime` with provided `RP2040Clock` implementation; internal clock used for timed sleep/wake
 ---
 
 ## Project Structure
@@ -119,6 +122,54 @@ int main() {
 
 The `Task<N>` template parameter is the stack size in 32-bit words. `Task<1024>` allocates 4KB.
 
+Additional APIs
+
+Mutex example:
+
+```cpp
+vecos::Mutex m;
+
+void ProtectedTask(void*) {
+    m.lock();
+    // critical section
+    m.unlock();
+}
+```
+
+Semaphore example:
+
+```cpp
+vecos::Semaphore sem(1);
+
+void Worker(void*) {
+    sem.wait();
+    // access resource
+    sem.signal();
+}
+```
+
+Queue example (producer/consumer):
+
+```cpp
+vecos::Queue<int, 8> q;
+
+void Producer(void*) {
+    for (int i=0;i<100;i++) q.send(i);
+}
+
+void Consumer(void*) {
+    int v;
+    while(true){ q.receive(v); /* use v */ }
+}
+```
+
+Sleep example:
+
+```cpp
+// suspend current task for 100 ms
+vecos::sleep_task(100);
+```
+
 ---
 
 ## How It Works
@@ -169,6 +220,13 @@ Your `#include` paths are configured automatically — no manual `include_direct
 | `os.add_task(task)` | Registers a task. Returns `false` if the internal limit is reached |
 | `os.start()` | Starts the scheduler. Never returns |
 | `os.task_count()` | Returns the number of registered tasks |
+
+| `vecos::Mutex` | Mutex object with `lock()`, `unlock()`, and `try_lock()` |
+| `vecos::Semaphore` | Counting semaphore with `wait()` and `signal()` |
+| `vecos::Queue<T,N>` | Fixed-size typed message queue with `send()` and `receive()` blocking operations |
+| `vecos::sleep_task(...)` | Suspend calling task for a duration (ms or chrono)
+| `vecos::SystemTime` | Abstract clock interface; `RP2040Clock` provided for RP2040 platforms |
+| `HARD_MAX_TASK` | Compile-time limit of tasks (default 16) |
 
 ---
 
