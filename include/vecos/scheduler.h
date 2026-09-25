@@ -21,9 +21,13 @@ namespace vecos {
     class TaskBase {
         public:
           TaskBase(const TaskBase &) = delete;
-          TaskBase operator=(const TaskBase &) = delete;
+          TaskBase& operator=(const TaskBase &) = delete;
           TCB* get_tcb() {
             return &_tcb;
+          }
+
+          void setPriority(TaskPriority priority) {
+            _tcb.priority = priority;
           }
 
         protected: 
@@ -51,6 +55,21 @@ namespace vecos {
           {
             auto casted_fn = reinterpret_cast<void (*)(void *)>(task_fn);
             vecos::port::task_init(casted_fn,arg,this->get_tcb());
+          } 
+
+          Task(void (*task_fn)(void *),TaskPriority priority,void *arg = nullptr) : 
+          TaskBase(&_stack[stack_size-1],stack_size)
+          {
+            vecos::port::task_init(task_fn,arg,this->get_tcb());
+            this->setPriority(priority);
+          } 
+
+          Task(void (*task_fn)(),TaskPriority priority,void *arg = nullptr) : 
+          TaskBase(&_stack[stack_size-1],stack_size)
+          {
+            auto casted_fn = reinterpret_cast<void (*)(void *)>(task_fn);
+            vecos::port::task_init(casted_fn,arg,this->get_tcb());
+            this->setPriority(priority);
           } 
 
         private:

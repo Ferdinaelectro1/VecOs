@@ -52,30 +52,36 @@ extern "C" void vTaskSwitchContext() {
         current_time = instance_scheduler->_sys_time->get_ticks_us(); // Décentralisé !
     }
 
-    uint16_t starting_idx = instance_scheduler->_current_task_idx;
-    uint16_t next_idx = starting_idx;
-
-    for (uint16_t i = 1; i < instance_scheduler->task_count(); i++) {
-            next_idx = (next_idx + 1) % instance_scheduler->task_count();
-
-            TCB* tcb = instance_scheduler->_tasks[next_idx]->get_tcb();
-
-            if(tcb->state == TaskState::BLOCKED) continue;
-
-            // Si la tâche dormais, on vérifie si l'heure du réveil a sonné
-            if (tcb->state == TaskState::SLEEPING) {
-                if (current_time >= tcb->wake_up_time) {
-                    tcb->state = TaskState::READY;
-                }
-            }
-
-            // Si on trouve une tâche prête, on effectue le switch !
-            if (tcb->state == TaskState::READY) {
-                instance_scheduler->_current_task_idx = next_idx;
-                current_task_tcb_ptr = tcb;
-                return; 
-            }
+    TaskPriority best = TaskPriority::LOW;
+    bool found_atleast_one_task_ready = false;
+    for (uint16_t i = 1; i < instance_scheduler->task_count(); i++)
+    {
+        TCB *tcb = instance_scheduler->_tasks[i]->get_tcb();
+        if(tcb->state == TaskState::SLEEPING && current_time >= tcb->wake_up_time) {
+            tcb->state = TaskState::READY;
+        }
+        if(tcb->state == TaskState::READY && (!found_atleast_one_task_ready || tcb->priority > best)) {
+            best = tcb->priority;
+            found_atleast_one_task_ready = true;
+        }
     }
+    
+    if(found_atleast_one_task_ready) {
+        uint16_t idx = instance_scheduler->_current_task_idx;
+        uint16_t count = instance_scheduler->task_count();
+        for(uint16_t i = 0; i < count ; i++) {
+            idx = (idx + 1) % count;
+            if(idx == 0) continue; //Idle task
+
+            TCB *tcb = instance_scheduler->_tasks[idx]->get_tcb();
+            if(tcb->state == TaskState::READY && tcb->priority == best) {
+                instance_scheduler->_current_task_idx = idx;
+                current_task_tcb_ptr = tcb;
+                return;
+            }
+        }
+    }
+
     //if all task sleeping we go to run idle task
     instance_scheduler->_current_task_idx = 0;
     current_task_tcb_ptr = instance_scheduler->_tasks[0]->get_tcb();
