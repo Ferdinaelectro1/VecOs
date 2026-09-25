@@ -1,0 +1,4 @@
+[wokwi]
+version = 1
+firmware = "../../build/examples/priority_task/priority_task.uf2"
+elf = "../../build/examples/priority_task/priority_task.elf"

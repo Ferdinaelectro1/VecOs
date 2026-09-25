@@ -41,4 +41,5 @@ add_subdirectory(examples/mutex_and_print)
 add_subdirectory(examples/producer_consumer)
 add_subdirectory(examples/message_exchanger)
 add_subdirectory(examples/CoreRacer_game)
+add_subdirectory(examples/priority_task)
 #end of examples utility

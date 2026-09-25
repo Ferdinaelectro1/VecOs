@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "author": "Ferdinaelectro",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-pi-pico",
+      "id": "pico",
+      "top": 0,
+      "left": 0,
+      "attrs": { "builder": "pico-sdk" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led1",
+      "top": 114,
+      "left": 160.2,
+      "rotate": 90,
+      "attrs": { "color": "red" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led2",
+      "top": 56.4,
+      "left": 160.2,
+      "rotate": 90,
+      "attrs": { "color": "red" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led3",
+      "top": 181.2,
+      "left": 169.8,
+      "rotate": 90,
+      "attrs": { "color": "red" }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn1",
+      "top": 255.8,
+      "left": 28.8,
+      "attrs": { "color": "green", "xray": "1" }
+    }
+  ],
+  "connections": [
+    [ "pico:GP0", "$serialMonitor:RX", "", [] ],
+    [ "pico:GP1", "$serialMonitor:TX", "", [] ],
+    [ "led2:A", "pico:GP28", "green", [ "h-57.6", "v-9.6" ] ],
+    [ "led1:A", "pico:GP27", "green", [ "h-57.6", "v-48" ] ],
+    [ "pico:GND.8", "led2:C", "black", [ "h0" ] ],
+    [ "led2:C", "led1:C", "green", [ "h0", "v-47.6", "h76.8", "v86.4", "h-76.8" ] ],
+    [ "led1:C", "led3:C", "green", [ "h9.6", "v-9.2", "h57.6", "v48", "h-76.8", "v28.8" ] ],
+    [ "pico:GP26", "led3:A", "green", [ "h24", "v121.65" ] ],
+    [ "btn1:1.l", "pico:GP6", "green", [ "h-86.4", "v-192" ] ],
+    [ "pico:GND.3", "btn1:2.l", "black", [ "h-44.4", "v121.65", "h0", "v38.4", "h172.8" ] ]
+  ],
+  "dependencies": {}
+}
