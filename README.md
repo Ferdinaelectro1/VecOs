@@ -32,11 +32,14 @@ VectOS is a from-scratch RTOS micro-kernel targeting the **Raspberry Pi Pico (RP
 
 ## Recent Updates
 
-The last two commits add priority scheduling and a dedicated demo that exercises it:
+Priority scheduling landed in three steps:
 
-- `feat: add priority-based preemptive scheduling` introduces `vecos::TaskPriority`, stores priority in each task control block, and updates the scheduler to select the highest-priority READY task instead of only round-robin rotation.
-- `examples: add priority_task example` adds `examples/priority_task/` with three blinking tasks and a fourth `CRITICAL` task driven by a button input.
-- `vecos::Task` now has overloads that accept a priority at construction time, making it straightforward to promote a task without extra setup code.
+- `feat: add priority-based preemptive scheduling` (`1f8a01f`) introduces `vecos::TaskPriority`, stores the priority in each task control block, and updates the scheduler to select the highest-priority READY task, with round-robin among tasks of the same priority.
+- `examples: add priority_task example` (`2c4c543`) adds `examples/priority_task/` with three blinking tasks and a fourth `CRITICAL` task driven by a button input.
+- `docs: update README for priority scheduling` (`0a041bc`) documents the feature.
+
+`vecos::Task` also has constructor overloads that accept a priority, so promoting a task needs no extra setup code.
+
 ---
 
 ## Project Structure
@@ -89,7 +92,7 @@ export PICO_SDK_PATH=/opt/pico-sdk   # adjust to your local installation
 
 ```bash
 git clone https://github.com/Ferdinaelectro1/VecOs.git
-cd VectOS
+cd VecOs
 mkdir build && cd build
 cmake ..
 make -j$(nproc)
@@ -136,6 +139,19 @@ int main() {
 The `Task<N>` template parameter is the stack size in 32-bit words. `Task<1024>` allocates 4KB.
 
 Additional APIs
+
+Priority example:
+
+```cpp
+// Priorities: LOW, NORMAL (default), HIGH, CRITICAL
+vecos::Task<1024> worker(WorkerTask);                          // NORMAL
+vecos::Task<512>  alarm(AlarmTask, TaskPriority::CRITICAL);    // runs first whenever READY
+
+// Or change it later
+worker.setPriority(TaskPriority::HIGH);
+```
+
+Tasks of the same priority share the CPU in round-robin. A higher-priority task that is READY always runs before lower-priority ones, so give your `CRITICAL` tasks a `sleep_task()` or a blocking call to let the others run.
 
 Mutex example:
 
@@ -198,7 +214,8 @@ PendSV pended (lowest priority — executes after all hardware IRQs clear)
         │
         ├─ ASM saves R4–R11 onto the current task's PSP
         │
-        ├─ C++ vTaskSwitchContext() selects the next task (round-robin index)
+        ├─ C++ vTaskSwitchContext() wakes expired sleepers, then selects the
+        │  highest-priority READY task (round-robin among equals; idle if none)
         │
         └─ ASM restores R4–R11 from the new task's stack, updates PSP, returns
 ```
@@ -228,16 +245,17 @@ Your `#include` paths are configured automatically — no manual `include_direct
 
 | Symbol | Description |
 |---|---|
-| `vecos::Task<N>` | Declares a task with a statically allocated stack of N words (N × 4 bytes) |
+| `vecos::Task<N>` | Declares a task with a statically allocated stack of N words (N × 4 bytes); optional `TaskPriority` constructor argument |
 | `vecos::Scheduler` | The kernel object. One instance per application |
 | `os.add_task(task)` | Registers a task. Returns `false` if the internal limit is reached |
 | `os.start()` | Starts the scheduler. Never returns |
 | `os.task_count()` | Returns the number of registered tasks |
-
+| `vecos::TaskPriority` | Enum: `LOW`, `NORMAL` (default), `HIGH`, `CRITICAL` |
+| `task.setPriority(p)` | Changes the priority of a task |
 | `vecos::Mutex` | Mutex object with `lock()`, `unlock()`, and `try_lock()` |
 | `vecos::Semaphore` | Counting semaphore with `wait()` and `signal()` |
 | `vecos::Queue<T,N>` | Fixed-size typed message queue with `send()` and `receive()` blocking operations |
-| `vecos::sleep_task(...)` | Suspend calling task for a duration (ms or chrono)
+| `vecos::sleep_task(...)` | Suspend calling task for a duration (ms or chrono) |
 | `vecos::SystemTime` | Abstract clock interface; `RP2040Clock` provided for RP2040 platforms |
 | `HARD_MAX_TASK` | Compile-time limit of tasks (default 16) |
 
