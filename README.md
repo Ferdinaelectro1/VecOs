@@ -22,13 +22,21 @@ VectOS is a from-scratch RTOS micro-kernel targeting the **Raspberry Pi Pico (RP
 ## Features
 
 - **Preemptive multitasking** — context switches are driven by the hardware SysTick timer and the `PendSV` exception, not cooperative yields
-- **Pure round-robin scheduling** — execution time shared fairly and symmetrically among all registered tasks
+- **Priority-aware scheduling** — the scheduler now picks the highest-priority READY task, while still waking sleeping tasks when their timer expires
 - **Type-safe static stack allocation** — `vecos::Task<StackSize>` allocates each task's stack at compile time, guaranteeing zero heap fragmentation and no runtime allocation failures
 - **Clean C++ API** — hides raw register manipulation behind a straightforward object-oriented interface
 - **Synchronization primitives** — lightweight `vecos::Mutex` and `vecos::Semaphore` for mutual exclusion and resource counting
 - **Message queues** — `vecos::Queue<T, N>` for passing typed messages between tasks with blocking send/receive
 - **Task sleep API** — `vecos::sleep_task(ms)` or `sleep_task(std::chrono::milliseconds)` to suspend the calling task for a duration
 - **Platform clock abstraction** — `vecos::SystemTime` with provided `RP2040Clock` implementation; internal clock used for timed sleep/wake
+
+## Recent Updates
+
+The last two commits add priority scheduling and a dedicated demo that exercises it:
+
+- `feat: add priority-based preemptive scheduling` introduces `vecos::TaskPriority`, stores priority in each task control block, and updates the scheduler to select the highest-priority READY task instead of only round-robin rotation.
+- `examples: add priority_task example` adds `examples/priority_task/` with three blinking tasks and a fourth `CRITICAL` task driven by a button input.
+- `vecos::Task` now has overloads that accept a priority at construction time, making it straightforward to promote a task without extra setup code.
 ---
 
 ## Project Structure
@@ -46,9 +54,14 @@ VectOS/
 │   └── ports/
 │       └── rp2040_context_switch.S  # ASM context save/restore, PendSV & SVC handlers
 └── examples/
-    └── blink/
+    ├── blink/
+    │   ├── CMakeLists.txt
+    │   └── main.cpp             # Two preemptive blinking tasks
+    └── priority_task/
         ├── CMakeLists.txt
-        └── main.cpp             # Two preemptive blinking tasks
+        ├── diagram.json         # Wokwi wiring for the priority demo
+        ├── main.cpp             # Three LED tasks plus one CRITICAL button task
+        └── wokwi.toml
 ```
 
 ---
@@ -84,7 +97,7 @@ make -j$(nproc)
 
 ### Flash
 
-Boot your Pico in **BOOTSEL** mode, then drag and drop `roundrobin.uf2` from the `build/` directory onto the mounted volume.
+Boot your Pico in **BOOTSEL** mode, then drag and drop the generated UF2 for the example you built, for example `build/examples/priority_task/priority_task.uf2`, onto the mounted volume.
 
 ---
 
