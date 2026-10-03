@@ -43,7 +43,10 @@ void vecos::Mutex::unlock() {
     _locked = false;
     //we wake up a single task
     TCB *task_to_wake = vecos::utils::read_front(_head,_tail);
-    if(task_to_wake != nullptr) task_to_wake->state = TaskState::READY;
+    if(task_to_wake != nullptr) {
+        task_to_wake->state = TaskState::READY;
+        vecos::port::yield_cpu(); // yield so the scheduler can run the woken task right away if it has a higher priority
+    }
     vecos::port::restore_interrupts(inter_state); //after lock we restore hardware interrupt
 }
 

@@ -63,6 +63,7 @@ namespace vecos {
             _waiting_to_read = _waiting_to_read->next_blocked; // Remove it from the waiting list
             task_to_wake->next_blocked = nullptr;
             task_to_wake->state = TaskState::READY;           // Set task state to ready
+            vecos::port::yield_cpu(); // yield so the scheduler can run the woken task right away if it has a higher priority
         }
 
         vecos::port::restore_interrupts(intState);
@@ -106,6 +107,7 @@ namespace vecos {
             _waiting_to_write = _waiting_to_write->next_blocked; // Remove it from the waiting list
             task_to_wake->next_blocked = nullptr;
             task_to_wake->state = TaskState::READY;             // Set task state to ready
+            vecos::port::yield_cpu(); // yield so the scheduler can run the woken task right away if it has a higher priority
         }
 
         vecos::port::restore_interrupts(intState);

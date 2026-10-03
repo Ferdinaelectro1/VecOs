@@ -61,5 +61,6 @@ void vecos::Semaphore::signal()
     _waiting_tcb = _waiting_tcb->next_blocked;
     task_to_wake->state  = TaskState::READY;
     task_to_wake->next_blocked = nullptr;
+    vecos::port::yield_cpu(); // yield so the scheduler can run the woken task right away if it has a higher priority
     vecos::port::restore_interrupts(inter_flag);
 }
