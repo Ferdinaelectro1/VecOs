@@ -1,0 +1,4 @@
+[wokwi]
+version = 1
+firmware = "../../build/examples/semaphore_latency/semaphore_latency.uf2"
+elf = "../../build/examples/semaphore_latency/semaphore_latency.elf"

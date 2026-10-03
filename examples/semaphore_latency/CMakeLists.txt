@@ -1,0 +1,5 @@
+add_executable(semaphore_latency main.cpp)
+
+target_link_libraries(semaphore_latency vecos)
+
+pico_add_extra_outputs(semaphore_latency)
