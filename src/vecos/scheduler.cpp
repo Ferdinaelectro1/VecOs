@@ -18,6 +18,24 @@ static void vecos_idle_task_fn(void* arg) {
     }
 }
 
+static bool stack_overflowed(const TCB *tcb) {
+    if(*(tcb->stack_base - (tcb->stack_size - 1)) != vecos::constant::CANARY) return true;
+    return false;
+}
+
+/**
+ * We bloc all task when stack overflowed, 
+ * we never return. Because, another task 
+ * may be corrumpd by current stack overflow 
+ */
+static void defaultStackOverflowHandler(TCB *) {
+    vecos::port::save_and_disable_interrupts();
+    while (1)
+    {
+        vecos::port::put_cpu_to_sleep();
+    }   
+}
+
 static vecos::Task<128> idle_task(vecos_idle_task_fn);
 
 TCB* current_task_tcb_ptr = nullptr; //global pour l'asm
@@ -44,8 +62,19 @@ bool vecos::Scheduler::add_task(TaskBase &task)
     return true;
 }
 
+void vecos::Scheduler::set_stackOverflowHandler(StackOverflowHandler handler) {
+    _stackOverflowHandler = handler;
+}
+
 extern "C" void vTaskSwitchContext() {
     if (instance_scheduler == nullptr || instance_scheduler->task_count() == 0) return;
+    if (stack_overflowed(current_task_tcb_ptr)) {
+        if(instance_scheduler->_stackOverflowHandler != nullptr) {
+            instance_scheduler->_stackOverflowHandler(current_task_tcb_ptr);
+        } else {
+            defaultStackOverflowHandler(current_task_tcb_ptr);
+        }
+    }
 
     uint64_t current_time = 0;
     if (instance_scheduler->_sys_time != nullptr) {

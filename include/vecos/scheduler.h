@@ -12,9 +12,11 @@ using namespace std::chrono_literals;
 #include "utils.h"
 #include "platform_timer.h"
 #include "port.h"
+#include "constant.h"
 
 
 extern "C" void vTaskSwitchContext();
+using StackOverflowHandler = void (*)(TCB *);
 
 namespace vecos {
 
@@ -32,6 +34,7 @@ namespace vecos {
 
         protected: 
           TaskBase(uint32_t* stack_top,uint32_t size) {
+            *(stack_top - (size-1)) = vecos::constant::CANARY;
             _tcb.stack_base = stack_top;
             _tcb.stack_size = size;
           }
@@ -88,6 +91,7 @@ namespace vecos {
     
           bool add_task(TaskBase& task);
         
+          void set_stackOverflowHandler(StackOverflowHandler handler);
     
           [[noreturn]] void start();
 
@@ -99,6 +103,7 @@ namespace vecos {
           uint16_t _current_task_idx = 0;
           TaskBase *_tasks[HARD_MAX_TASK];
           SystemTime *_sys_time = nullptr;
+          StackOverflowHandler _stackOverflowHandler = nullptr;
 
           friend void ::vTaskSwitchContext();
           friend void sleep_task(::std::chrono::milliseconds duration);
