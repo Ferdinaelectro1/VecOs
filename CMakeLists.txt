@@ -43,4 +43,5 @@ add_subdirectory(examples/message_exchanger)
 add_subdirectory(examples/CoreRacer_game)
 add_subdirectory(examples/priority_task)
 add_subdirectory(examples/semaphore_latency)
+add_subdirectory(examples/stack_overflow_example)
 #end of examples utility

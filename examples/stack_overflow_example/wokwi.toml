@@ -1,0 +1,4 @@
+[wokwi]
+version = 1
+firmware = "../../build/examples/stack_overflow_example/stack_overflow_example.uf2"
+elf = "../../build/examples/stack_overflow_example/stack_overflow_example.elf"

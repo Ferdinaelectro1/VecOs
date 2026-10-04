@@ -1,0 +1,5 @@
+add_executable(stack_overflow_example main.cpp)
+
+target_link_libraries(stack_overflow_example vecos)
+
+pico_add_extra_outputs(stack_overflow_example)
