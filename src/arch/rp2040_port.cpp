@@ -45,7 +45,9 @@ void vecos::port::init_hardware_context() {
 }
 
 void vecos::port::yield_cpu() {
-    __asm volatile("svc #0");
+    // Déclenche directement PendSV via l'ICSR (Interrupt Control and State Register)
+    volatile uint32_t *icsr = (volatile uint32_t *)0xE000ED04;
+    *icsr = 0x10000000; // Force le bit 28 (PendSV set-pending)  
 }
 
 void vecos::port::put_cpu_to_sleep() {
