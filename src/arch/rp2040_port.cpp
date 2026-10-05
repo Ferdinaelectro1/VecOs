@@ -11,7 +11,6 @@
 #define TIMER_TICK 1
 
 extern "C" {
-    void SVC_Handler(void);
     void PendSV_Handler(void);
 }
 
@@ -30,9 +29,6 @@ void vecos::port::init_hardware_context() {
     // --- INJECTION BRUTE DANS LA TABLE VTOR ---
     // On récupère l'adresse de la table des vecteurs actuellement utilisée en RAM
     uint32_t *vtor_table = (uint32_t *)scb_hw->vtor;
-    
-    // Case 11 = SVC (Supervisor Call)
-    vtor_table[11] = (uint32_t)SVC_Handler;
     
     // Case 14 = PendSV (Pendable Service Call)
     vtor_table[14] = (uint32_t)PendSV_Handler;

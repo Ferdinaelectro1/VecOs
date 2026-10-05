@@ -21,7 +21,7 @@ VectOS is a from-scratch RTOS micro-kernel targeting the **Raspberry Pi Pico (RP
 
 ## Features
 
-- **Preemptive multitasking** — context switches are driven by the hardware SysTick timer and the `PendSV` exception, not cooperative yields
+- **Preemptive multitasking** — context switches are driven by a 1 ms hardware timer tick and the `PendSV` exception, not cooperative yields
 - **Priority-aware scheduling** — the scheduler now picks the highest-priority READY task, while still waking sleeping tasks when their timer expires
 - **Type-safe static stack allocation** — `vecos::Task<StackSize>` allocates each task's stack at compile time, guaranteeing zero heap fragmentation and no runtime allocation failures
 - **Clean C++ API** — hides raw register manipulation behind a straightforward object-oriented interface
@@ -55,7 +55,7 @@ VectOS/
 ├── src/
 │   ├── scheduler.cpp            # Scheduler core implementation & vTaskSwitchContext
 │   └── ports/
-│       └── rp2040_context_switch.S  # ASM context save/restore, PendSV & SVC handlers
+│       └── rp2040_context_switch.S  # ASM context save/restore, PendSV handler
 └── examples/
     ├── blink/
     │   ├── CMakeLists.txt
@@ -204,13 +204,13 @@ vecos::sleep_task(100);
 ## How It Works
 
 ```
-SysTick fires every 5ms
+Timer tick (every 1 ms)  or  yield_cpu() (sleep, blocking call, wake-up)
         │
         ▼
-SVC handler triggered (svc #0)
+PendSV pended directly (write to the ICSR register)
         │
         ▼
-PendSV pended (lowest priority — executes after all hardware IRQs clear)
+PendSV runs (lowest priority — executes after all hardware IRQs clear)
         │
         ├─ ASM saves R4–R11 onto the current task's PSP
         │

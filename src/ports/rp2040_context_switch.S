@@ -59,12 +59,3 @@ PendSV_Handler:
     BX      LR               @ MAGIC INTERRUPT RETURN!
                              @ Since the CPU is in Handler mode, it reads LR (0xFFFFFFFD),
                              @ automatically unstacks the Hardware Stack from PSP and launches Task 2!
-.global SVC_Handler
-.type SVC_Handler, %function
-.thumb_func
-SVC_Handler:
-    @ Here we are GUARANTEED to be in privileged mode!
-    LDR     R0, =0xE000ED04     @ Address of the ICSR
-    LDR     R1, =0x10000000     @ Bit 28 (PENDSVSET)
-    STR     R1, [R0]            @ Force the PendSV trigger!
-    BX      LR                  @ Exit SVC, PendSV will execute immediately after!
