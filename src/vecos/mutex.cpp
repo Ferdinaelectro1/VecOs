@@ -3,8 +3,6 @@
 // VectOS — Lightweight preemptive RTOS for Microcontroller
 // https://github.com/Ferdinaelectro1/VectOS
 
-#include <pico/stdlib.h>
-#include <hardware/gpio.h>
 #include "vecos/mutex.h"
 #include "vecos/port.h"
 
