@@ -45,26 +45,34 @@ Priority scheduling landed in three steps:
 ## Project Structure
 
 ```
-VectOS/
+VecOs/
 ├── CMakeLists.txt
 ├── README.md
-├── pico_sdk_import.cmake
 ├── include/
-│   └── vecos/
-│       └── scheduler.h          # TaskBase, Task<N>, and Scheduler declarations
+│   └── vecos/                    # Public headers
+│       ├── scheduler.h           # TaskBase, Task<N>, and Scheduler declarations
+│       ├── mutex.h, semaphore.h, queue_message.h
+│       ├── tcb.hpp               # Task control block (layout shared with the ASM)
+│       ├── port.h                # Contract that every port must implement
+│       └── platform_timer.h      # SystemTime interface and platform clock
 ├── src/
-│   ├── scheduler.cpp            # Scheduler core implementation & vTaskSwitchContext
+│   ├── vecos/                    # Portable core: scheduler, mutex, semaphore
 │   └── ports/
-│       └── rp2040_context_switch.S  # ASM context save/restore, PendSV handler
+│       └── rp2040/               # RP2040 port
+│           ├── port.cpp          # Tick timer, PendSV setup, yield, interrupts
+│           ├── init.S            # Starts the first task
+│           └── context_switch.S  # ASM context save/restore, PendSV handler
+├── tests/
+│   └── tcb_layout_test.cpp       # Checks the TCB layout expected by the ASM
 └── examples/
-    ├── blink/
-    │   ├── CMakeLists.txt
-    │   └── main.cpp             # Two preemptive blinking tasks
-    └── priority_task/
-        ├── CMakeLists.txt
-        ├── diagram.json         # Wokwi wiring for the priority demo
-        ├── main.cpp             # Three LED tasks plus one CRITICAL button task
-        └── wokwi.toml
+    ├── blink/                    # Two preemptive blinking tasks
+    ├── priority_task/            # Three LED tasks plus one CRITICAL button task
+    ├── semaphore_latency/        # Semaphore wake-up latency, measured in us
+    ├── stack_overflow_example/   # Canary overwrite and overflow handler
+    ├── mutex_and_print/          # Mutex-protected output
+    ├── producer_consumer/        # Producers and consumers with a semaphore
+    ├── message_exchanger/        # Sender and receiver with a queue
+    └── CoreRacer_game/           # OLED game demo (SSD1306)
 ```
 
 ---
