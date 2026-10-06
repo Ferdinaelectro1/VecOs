@@ -6,6 +6,14 @@
 #pragma once
 #include <stdint.h>
 
+#if defined(PICO_BOARD) || defined(TARGET_RP2040)
+    #include "pico/time.h"
+#elif defined(STM32F4xx)
+    #include "stm32f4xx_hal.h"
+#else 
+    #error "VectOS error: Unsupported hardware platform or missing platform macro!"
+#endif
+
 namespace vecos {
 
     class SystemTime {
@@ -14,21 +22,17 @@ namespace vecos {
         virtual ~SystemTime() = default;
     };
 
-#if defined(PICO_BOARD) || defined(TARGET_RP2040)
-    #include "pico/time.h"
-    
-    class RP2040Clock : public SystemTime {
+#if defined(PICO_BOARD) || defined(TARGET_RP2040)    
+    class PicoClock : public SystemTime {
     public:
         uint64_t get_ticks_us() override {
             return time_us_64();
         }
     };
 
-    inline RP2040Clock platform_clock_instance;
+    inline PicoClock platform_clock_instance;
 
-#elif defined(STM32F4xx)
-    #include "stm32f4xx_hal.h"
-    
+#elif defined(STM32F4xx)    
     class STM32Clock : public SystemTime {
     public:
         uint64_t get_ticks_us() override {
