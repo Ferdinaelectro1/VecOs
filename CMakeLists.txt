@@ -9,14 +9,17 @@ set(PICOTOOL_FORCE_FETCH_FROM_GIT ON CACHE BOOL "" FORCE)
 
 pico_sdk_init()
 
+set(PLATFORM_CODE  src/ports/rp2040/port.cpp
+                   src/ports/rp2040/init.S
+                    src/ports/rp2040/context_switch.S
+    )
+
 # ── La bibliothèque vecos ──────────────────────────────────────
 add_library(vecos STATIC
     src/vecos/scheduler.cpp
     src/vecos/mutex.cpp
     src/vecos/semaphore.cpp
-    src/arch/rp2040_port.cpp
-    src/ports/rp2040_init.S
-    src/ports/rp2040_context_switch.S
+    ${PLATFORM_CODE}
 )
 
 target_include_directories(vecos PUBLIC
