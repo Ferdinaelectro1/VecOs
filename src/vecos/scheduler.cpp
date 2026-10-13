@@ -4,7 +4,6 @@
 // https://github.com/Ferdinaelectro1/VectOS
 
 #include "vecos/scheduler.h"
-#include "vecos/platform_timer.h"
 #include "vecos/port.h"
 
 extern "C" {
@@ -44,7 +43,6 @@ vecos::Scheduler* instance_scheduler = nullptr; //global pour l'asm
 
 vecos::Scheduler::Scheduler() : _task_count(0){
     instance_scheduler = this;
-    _sys_time = internal_platform_clock;
     // On force la tâche Idle à l'index 0 dès le départ
     _tasks[0] = &idle_task;
     _tasks[0]->get_tcb()->state = TaskState::READY;
@@ -76,10 +74,7 @@ extern "C" void vTaskSwitchContext() {
         }
     }
 
-    uint64_t current_time = 0;
-    if (instance_scheduler->_sys_time != nullptr) {
-        current_time = instance_scheduler->_sys_time->get_ticks_us(); // Décentralisé !
-    }
+    uint64_t current_time = vecos::port::get_time_us(); // Décentralisé !
 
     TaskPriority best = TaskPriority::LOW;
     bool found_atleast_one_task_ready = false;
@@ -132,8 +127,8 @@ uint16_t vecos::Scheduler::task_count() const
 void vecos::sleep_task(::std::chrono::milliseconds duration)
 {
     TCB *current = current_task_tcb_ptr;
-    if (current && instance_scheduler && instance_scheduler->_sys_time) {
-        uint64_t now = instance_scheduler->_sys_time->get_ticks_us();
+    if (current && instance_scheduler) {
+        uint64_t now = vecos::port::get_time_us();
         current->wake_up_time = now + (static_cast<uint64_t>(duration.count()) * 1000);
         current->state = TaskState::SLEEPING;        
         vecos::port::yield_cpu();

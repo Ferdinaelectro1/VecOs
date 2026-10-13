@@ -10,7 +10,6 @@ using namespace std::chrono_literals;
 
 #include "tcb.hpp"
 #include "utils.h"
-#include "platform_timer.h"
 #include "port.h"
 #include "constant.h"
 
@@ -102,7 +101,6 @@ namespace vecos {
           uint16_t _task_count;
           uint16_t _current_task_idx = 0;
           TaskBase *_tasks[HARD_MAX_TASK];
-          SystemTime *_sys_time = nullptr;
           StackOverflowHandler _stackOverflowHandler = nullptr;
 
           friend void ::vTaskSwitchContext();

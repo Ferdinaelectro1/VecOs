@@ -29,5 +29,6 @@ namespace vecos {
         //Init system stack
         void task_init(void (*task_func_ptr)(void *),void *args,TCB *task_tcb);
 
+        uint64_t get_time_us();
     } // namespace port
 } // namespace vecos

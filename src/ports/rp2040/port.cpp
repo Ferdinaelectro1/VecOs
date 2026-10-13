@@ -96,3 +96,7 @@ void vecos::port::task_init(void (*task_func_ptr)(void *), void *args, TCB *task
   *sp   = 0;                        // R4
   task_tcb->stack_ptr = sp;
 }
+
+uint64_t vecos::port::get_time_us() {
+    return time_us_64();
+}
