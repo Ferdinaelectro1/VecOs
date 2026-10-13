@@ -2,6 +2,8 @@
 
 > Lightweight preemptive RTOS micro-kernel, written in ARM Cortex-M0+ Assembly and Modern C++17.
 
+[![Tests](https://github.com/Ferdinaelectro1/VecOs/actions/workflows/tests.yml/badge.svg)](https://github.com/Ferdinaelectro1/VecOs/actions/workflows/tests.yml)
+[![Firmware](https://github.com/Ferdinaelectro1/VecOs/actions/workflows/firmware.yml/badge.svg)](https://github.com/Ferdinaelectro1/VecOs/actions/workflows/firmware.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform: RP2040](https://img.shields.io/badge/Platform-RP2040-red.svg)](https://www.raspberrypi.com/products/rp2040/)
 [![Language: C++17](https://img.shields.io/badge/Language-C%2B%2B17-orange.svg)]()
