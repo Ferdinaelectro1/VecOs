@@ -13,7 +13,17 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-add_executable(scheduler_test scheduler_test.cpp)
+add_executable(scheduler_test scheduler_test.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/../src/vecos/scheduler.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/fake/fake_port.cpp
+)
+
+target_include_directories(scheduler_test PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include
+)
+target_compile_definitions(scheduler_test PUBLIC
+    VECOS_HOST_TEST
+)
 
 target_link_libraries(scheduler_test GTest::gtest_main)
 
