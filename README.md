@@ -2,8 +2,7 @@
 
 > Lightweight preemptive RTOS micro-kernel, written in ARM Cortex-M0+ Assembly and Modern C++17.
 
-[![Tests](https://github.com/Ferdinaelectro1/VecOs/actions/workflows/tests.yml/badge.svg)](https://github.com/Ferdinaelectro1/VecOs/actions/workflows/tests.yml)
-[![Firmware](https://github.com/Ferdinaelectro1/VecOs/actions/workflows/firmware.yml/badge.svg)](https://github.com/Ferdinaelectro1/VecOs/actions/workflows/firmware.yml)
+[![CI](https://github.com/Ferdinaelectro1/VecOs/actions/workflows/firmware.yml/badge.svg)](https://github.com/Ferdinaelectro1/VecOs/actions/workflows/firmware.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform: RP2040](https://img.shields.io/badge/Platform-RP2040-red.svg)](https://www.raspberrypi.com/products/rp2040/)
 [![Language: C++17](https://img.shields.io/badge/Language-C%2B%2B17-orange.svg)]()
@@ -30,17 +29,18 @@ VectOS is a from-scratch RTOS micro-kernel targeting the **Raspberry Pi Pico (RP
 - **Synchronization primitives** — lightweight `vecos::Mutex` and `vecos::Semaphore` for mutual exclusion and resource counting
 - **Message queues** — `vecos::Queue<T, N>` for passing typed messages between tasks with blocking send/receive
 - **Task sleep API** — `vecos::sleep_task(ms)` or `sleep_task(std::chrono::milliseconds)` to suspend the calling task for a duration
-- **Platform clock abstraction** — `vecos::SystemTime` with provided `RP2040Clock` implementation; internal clock used for timed sleep/wake
+- **Immediate wake-ups** — unblocking a task from `Mutex::unlock()`, `Semaphore::signal()` or a `Queue` triggers a context switch right away, so a higher-priority task does not wait for the next tick (about 4 us measured on the semaphore wake-up example, against about 1000 us without)
+- **Stack overflow detection** — a canary word at the bottom of every task stack is checked at each context switch; a user handler can be registered with `os.set_stackOverflowHandler(...)`, and the default handler freezes the system
+- **Port-provided clock** — the kernel reads time through `vecos::port::get_time_us()`, implemented by each port, and uses it for timed sleep/wake
+- **Tested on the PC** — the scheduler logic is unit-tested with Google Test against a fake port, and CI builds the firmware and runs the tests on every push
 
 ## Recent Updates
 
-Priority scheduling landed in three steps:
-
-- `feat: add priority-based preemptive scheduling` (`1f8a01f`) introduces `vecos::TaskPriority`, stores the priority in each task control block, and updates the scheduler to select the highest-priority READY task, with round-robin among tasks of the same priority.
-- `examples: add priority_task example` (`2c4c543`) adds `examples/priority_task/` with three blinking tasks and a fourth `CRITICAL` task driven by a button input.
-- `docs: update README for priority scheduling` (`0a041bc`) documents the feature.
-
-`vecos::Task` also has constructor overloads that accept a priority, so promoting a task needs no extra setup code.
+- **Immediate wake-ups**: `yield_cpu()` now requests PendSV directly (no `svc`), so it is safe to call with interrupts disabled, and `Mutex::unlock()`, `Semaphore::signal()` and `Queue` call it when they unblock a task.
+- **Stack overflow detection**: canary check in the scheduler, configurable handler.
+- **Port-provided clock**: `platform_timer.h` was removed, the clock is now `vecos::port::get_time_us()`.
+- **Unit tests and CI**: Google Test suite for the scheduler running on the PC, plus a GitHub Actions workflow that builds the firmware and runs the tests.
+- **Priority scheduling**: `vecos::TaskPriority`, highest-priority READY task first, with round-robin among tasks of the same priority.
 
 ---
 
@@ -55,8 +55,7 @@ VecOs/
 │       ├── scheduler.h           # TaskBase, Task<N>, and Scheduler declarations
 │       ├── mutex.h, semaphore.h, queue_message.h
 │       ├── tcb.hpp               # Task control block (layout shared with the ASM)
-│       ├── port.h                # Contract that every port must implement
-│       └── platform_timer.h      # SystemTime interface and platform clock
+│       └── port.h                # Contract that every port must implement (including the clock)
 ├── src/
 │   ├── vecos/                    # Portable core: scheduler, mutex, semaphore
 │   └── ports/
@@ -65,7 +64,10 @@ VecOs/
 │           ├── init.S            # Starts the first task
 │           └── context_switch.S  # ASM context save/restore, PendSV handler
 ├── tests/
-│   └── tcb_layout_test.cpp       # Checks the TCB layout expected by the ASM
+│   ├── CMakeLists.txt            # Host-side tests (Google Test)
+│   ├── scheduler_test.cpp        # Scheduler logic and TCB layout tests
+│   └── fake/
+│       └── fake_port.cpp         # Fake port used to run the kernel on the PC
 └── examples/
     ├── blink/                    # Two preemptive blinking tasks
     ├── priority_task/            # Three LED tasks plus one CRITICAL button task
@@ -107,6 +109,18 @@ mkdir build && cd build
 cmake ..
 make -j$(nproc)
 ```
+
+### Run the tests on your PC
+
+The scheduler logic runs on your computer, against a fake port, so no Pico SDK is needed. You only need CMake, a host C++ compiler (`g++`) and an internet connection (CMake downloads Google Test the first time):
+
+```bash
+cmake -S tests -B build-tests
+cmake --build build-tests
+ctest --test-dir build-tests --output-on-failure
+```
+
+The same tests run in CI on every push.
 
 ### Flash
 
@@ -266,7 +280,8 @@ Your `#include` paths are configured automatically — no manual `include_direct
 | `vecos::Semaphore` | Counting semaphore with `wait()` and `signal()` |
 | `vecos::Queue<T,N>` | Fixed-size typed message queue with `send()` and `receive()` blocking operations |
 | `vecos::sleep_task(...)` | Suspend calling task for a duration (ms or chrono) |
-| `vecos::SystemTime` | Abstract clock interface; `RP2040Clock` provided for RP2040 platforms |
+| `os.set_stackOverflowHandler(fn)` | Registers `void fn(TCB *)`, called when a task's stack canary has been overwritten. Without one, the default handler disables interrupts and never returns. A handler that returns lets the scheduler keep running with a corrupted stack |
+| `vecos::port::get_time_us()` | Microsecond clock, implemented by each port (RP2040 uses `time_us_64()`) |
 | `HARD_MAX_TASK` | Compile-time limit of tasks (default 16) |
 
 ---
