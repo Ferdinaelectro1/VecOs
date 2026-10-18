@@ -1,4 +1,4 @@
-# VectOS
+# VecOs
 
 > Lightweight preemptive RTOS micro-kernel, written in ARM Cortex-M0+ Assembly and Modern C++17.
 
@@ -9,9 +9,9 @@
 
 ---
 
-## What is VectOS?
+## What is VecOs?
 
-VectOS is a from-scratch RTOS micro-kernel targeting the **Raspberry Pi Pico (RP2040)**. It combines bare-metal ARM Cortex-M0+ assembly for context switching with a clean C++17 API to make preemptive multitasking accessible without sacrificing reliability or memory safety.
+VecOs is a from-scratch RTOS micro-kernel targeting the **Raspberry Pi Pico (RP2040)**. It combines bare-metal ARM Cortex-M0+ assembly for context switching with a clean C++17 API to make preemptive multitasking accessible without sacrificing reliability or memory safety.
 
 **Core design goals:**
 - Zero heap usage — all stacks are statically allocated at compile time via C++ templates
@@ -244,16 +244,16 @@ PendSV runs (lowest priority — executes after all hardware IRQs clear)
         └─ ASM restores R4–R11 from the new task's stack, updates PSP, returns
 ```
 
-The hardware automatically saves and restores R0–R3, R12, LR, PC, and xPSR on every exception entry and exit — VectOS only handles the software-callee-saved registers (R4–R11) manually.
+The hardware automatically saves and restores R0–R3, R12, LR, PC, and xPSR on every exception entry and exit — VecOs only handles the software-callee-saved registers (R4–R11) manually.
 
 ---
 
-## Integrating VectOS into Your Project
+## Integrating VecOs into Your Project
 
-Add VectOS as a subdirectory and link against the `vecos` target:
+Add VecOs as a subdirectory and link against the `vecos` target:
 
 ```cmake
-add_subdirectory(libs/VectOS)
+add_subdirectory(libs/VecOs)
 
 target_link_libraries(your_project
     pico_stdlib
@@ -286,7 +286,7 @@ Your `#include` paths are configured automatically — no manual `include_direct
 
 ---
 
-![VectOS demo](assets/blink.gif)
+![VecOs demo](assets/blink.gif)
 
 ## License
 

@@ -3,8 +3,8 @@
 // VectOS — Lightweight preemptive RTOS for Microcontroller
 // https://github.com/Ferdinaelectro1/VectOS
 
-#include "../../include/vecos/port.h"
-#include "../../include/vecos/tcb.hpp"
+#include "vecos/port.h"
+#include "vecos/tcb.hpp"
 
 #define TIMER_TICK 1
 
