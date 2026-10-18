@@ -1,3 +1,8 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Ferdinand ATI
+// VecOs — Lightweight preemptive RTOS for 32-bit microcontrollers
+// https://github.com/Ferdinaelectro1/VecOs
+
 #include "stdio.h"
 #include "pico/stdlib.h"
 #include "hardware/i2c.h"
@@ -86,7 +91,7 @@ void draw_moon_surface() {
     }
 }
 
-// --- VectOS Game Logic ---
+// --- VecOs Game Logic ---
 
 enum class ButtonEvent {
     MOVE_LEFT,

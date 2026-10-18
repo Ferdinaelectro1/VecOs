@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2026 Ferdinand ATI
-// VectOS — Lightweight preemptive RTOS for Microcontroller
-// https://github.com/Ferdinaelectro1/VectOS
+// VecOs — Lightweight preemptive RTOS for 32-bit microcontrollers
+// https://github.com/Ferdinaelectro1/VecOs
 
 #ifndef VECOS_MUTEX_H
 #define VECOS_MUTEX_H

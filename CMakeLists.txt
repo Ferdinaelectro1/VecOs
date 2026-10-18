@@ -1,3 +1,8 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Ferdinand ATI
+# VecOs — Lightweight preemptive RTOS for 32-bit microcontrollers
+# https://github.com/Ferdinaelectro1/VecOs
+
 cmake_minimum_required(VERSION 3.13)
 include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
 

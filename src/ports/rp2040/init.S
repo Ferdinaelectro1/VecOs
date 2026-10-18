@@ -1,6 +1,7 @@
 @ SPDX-License-Identifier: MIT
 @ Copyright (c) 2026 Ferdinand ATI
-@ VectOS — Lightweight preemptive RTOS for RP2040
+@ VecOs — Lightweight preemptive RTOS for 32-bit microcontrollers
+@ https://github.com/Ferdinaelectro1/VecOs
 
 .syntax unified    @ Mandatory for using modern ARM syntax
 .thumb             @ Mandatory to compile in Thumb mode for the Cortex-M0+

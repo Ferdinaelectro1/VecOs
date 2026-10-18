@@ -1,3 +1,8 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Ferdinand ATI
+// VecOs — Lightweight preemptive RTOS for 32-bit microcontrollers
+// https://github.com/Ferdinaelectro1/VecOs
+
 #include <gtest/gtest.h>
 #include "vecos/tcb.hpp"
 #include "vecos/scheduler.h"

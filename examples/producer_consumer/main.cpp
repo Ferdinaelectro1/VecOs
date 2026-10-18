@@ -1,3 +1,8 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Ferdinand ATI
+// VecOs — Lightweight preemptive RTOS for 32-bit microcontrollers
+// https://github.com/Ferdinaelectro1/VecOs
+
 #include <stdio.h>
 #include <pico/stdlib.h>
 #include "vecos/scheduler.h"
@@ -73,7 +78,7 @@ vecos::Scheduler os;
 
 int main() {
     stdio_init_all();
-    printf("--- Starting VectOS Multi-Task Test ---\n");
+    printf("--- Starting VecOs Multi-Task Test ---\n");
 
     os.add_task(task_cons1);
     os.add_task(task_cons2);
