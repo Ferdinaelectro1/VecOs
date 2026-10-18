@@ -8,6 +8,8 @@
 
 #define TIMER_TICK 1
 
+uint64_t g_fake_time_us = 0;
+
 extern "C" {
     void PendSV_Handler(void) {
 
@@ -43,5 +45,5 @@ void vecos::port::task_init(void (*task_func_ptr)(void *), void *args, TCB *task
 }
 
 uint64_t vecos::port::get_time_us() {
-    return 0;
+    return g_fake_time_us;
 }
