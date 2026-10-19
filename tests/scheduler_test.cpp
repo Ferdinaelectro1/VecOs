@@ -70,3 +70,36 @@ TEST (Scheduler,SleepingTaskWakesUpAtDeadline) {
     EXPECT_EQ(task1.get_tcb()->state,TaskState::READY); //the scheduler has really made task1 READY
     EXPECT_EQ(current_task_tcb_ptr,task1.get_tcb());
 }
+
+TEST (Scheduler,IdleRunsWhenAllTasksSleep) {
+    current_task_tcb_ptr = nullptr;
+    g_fake_time_us = 0;
+
+    vecos::Scheduler os;
+    vecos::Task<256> task1([](){});  
+    vecos::Task<256> task2([](){});  
+
+    os.add_task(task1);
+    os.add_task(task2);
+
+    current_task_tcb_ptr = task1.get_tcb();
+    vTaskSwitchContext();
+    EXPECT_EQ(current_task_tcb_ptr,task1.get_tcb());
+    vecos::sleep_task(200); //Put task1 to sleep for 200 ms
+    current_task_tcb_ptr = task2.get_tcb();
+    vecos::sleep_task(200); //Put task2 to sleep for 200 ms
+
+    vTaskSwitchContext();
+    EXPECT_NE(current_task_tcb_ptr,task1.get_tcb());
+    EXPECT_NE(current_task_tcb_ptr,task2.get_tcb());
+    EXPECT_NE(current_task_tcb_ptr,nullptr);
+
+    //We check if it's just idle_task process, after many context switch
+    TCB *idle_task = current_task_tcb_ptr;
+    vTaskSwitchContext();
+    EXPECT_EQ(current_task_tcb_ptr,idle_task);
+    vTaskSwitchContext();
+    EXPECT_EQ(current_task_tcb_ptr,idle_task);
+    vTaskSwitchContext();
+    EXPECT_EQ(current_task_tcb_ptr,idle_task);
+}
