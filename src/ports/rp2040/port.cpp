@@ -4,6 +4,7 @@
 // https://github.com/Ferdinaelectro1/VecOs
 
 #include "hardware/structs/scb.h"
+#include "hardware/sync.h"
 #include "pico/time.h"
 #include "vecos/port.h"
 #include "vecos/tcb.hpp"
@@ -44,6 +45,8 @@ void vecos::port::yield_cpu() {
     // Déclenche directement PendSV via l'ICSR (Interrupt Control and State Register)
     volatile uint32_t *icsr = (volatile uint32_t *)0xE000ED04;
     *icsr = 0x10000000; // Force le bit 28 (PendSV set-pending)  
+    __dsb(); //wait until the ICSR write has really completed
+    __isb(); //flush the pipeline, so the next instruction is fetched after the PendSV request is taken into account
 }
 
 void vecos::port::put_cpu_to_sleep() {
