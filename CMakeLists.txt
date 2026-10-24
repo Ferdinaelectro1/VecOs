@@ -45,4 +45,5 @@ add_subdirectory(examples/CoreRacer_game)
 add_subdirectory(examples/priority_task)
 add_subdirectory(examples/semaphore_latency)
 add_subdirectory(examples/stack_overflow_example)
+add_subdirectory(examples/priority_inversion)
 #end of examples utility
