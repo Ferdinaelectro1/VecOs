@@ -26,4 +26,5 @@ struct TCB {
   uint64_t  wake_up_time = 0;
   TCB       *next_blocked;
   TaskPriority priority = TaskPriority::NORMAL;
+  TaskPriority base_priority = TaskPriority::NORMAL;
 };

@@ -29,6 +29,7 @@ namespace vecos {
 
           void setPriority(TaskPriority priority) {
             _tcb.priority = priority;
+            _tcb.base_priority = priority;
           }
 
         protected: 

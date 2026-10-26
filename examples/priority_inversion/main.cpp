@@ -26,6 +26,8 @@
 #include "vecos/scheduler.h"
 #include "vecos/mutex.h"
 
+#define LED 27
+
 vecos::Mutex mutex;
 
 //we use the for loop, because, in the pico-sdk, the busy_wait_ms, watch just 
@@ -38,9 +40,15 @@ void real_wait_without_just_watch_timer(const uint32_t ms) {
 }
 
 void normal_task_fn() {
+    gpio_init(LED);
+    gpio_set_dir(LED,GPIO_OUT);
+    bool led_state = true;
+    gpio_put(LED,led_state);
     while (1)
     {
         vecos::sleep_task(200);
+        gpio_put(LED,led_state);
+        led_state = !led_state;
         real_wait_without_just_watch_timer(3000);
     }
     
