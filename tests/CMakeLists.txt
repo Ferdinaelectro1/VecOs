@@ -23,11 +23,23 @@ add_executable(scheduler_test scheduler_test.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fake/fake_port.cpp
 )
 
+add_executable(mutex_test mutex_test.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/../src/vecos/scheduler.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../src/vecos/mutex.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/fake/fake_mutex_test_port.cpp
+)
+
 target_include_directories(scheduler_test PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/../include
 )
 
+target_include_directories(mutex_test PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include
+)
+
 target_link_libraries(scheduler_test GTest::gtest_main)
+target_link_libraries(mutex_test GTest::gtest_main)
 
 include(GoogleTest)
 gtest_discover_tests(scheduler_test)
+gtest_discover_tests(mutex_test)
