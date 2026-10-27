@@ -12,7 +12,7 @@
 namespace vecos {
     class Mutex {
         public:
-          Mutex();
+          explicit Mutex(bool inheritance_enabled = true);
           void init_debug();
 
           //Lock mutex
@@ -28,6 +28,7 @@ namespace vecos {
            TCB *_owner = nullptr;
            TCB *_head = nullptr;
            TCB *_tail = nullptr;
+           bool _inheritance_enabled;
            volatile bool _locked;
     };
 } //End vecos

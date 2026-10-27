@@ -8,9 +8,10 @@
 
 extern TCB* current_task_tcb_ptr;
 
-vecos::Mutex::Mutex() {
+vecos::Mutex::Mutex(const bool inheritance_enabled) {
     _locked = false;
     _owner  = nullptr;
+    _inheritance_enabled = inheritance_enabled;
 }
 
 void vecos::Mutex::lock()
@@ -19,12 +20,14 @@ void vecos::Mutex::lock()
     uint32_t inter_state = vecos::port::save_and_disable_interrupts();
 
     if(_locked) {
-        /*
-          If the priority of current waiting task is more than _owner task, we increase, 
-          the priority, of _owner task, to the same priority.
-        */
-        if(current_task_tcb_ptr->priority > _owner->priority) {
-            _owner->priority = current_task_tcb_ptr->priority;
+        if(_inheritance_enabled) {
+            /*
+            If the priority of current waiting task is more than _owner task, we increase, 
+            the priority, of _owner task, to the same priority.
+            */
+            if(current_task_tcb_ptr->priority > _owner->priority) {
+                _owner->priority = current_task_tcb_ptr->priority;
+            }
         }
         vecos::utils::append(_head,_tail,current_task_tcb_ptr);
 
@@ -45,8 +48,10 @@ void vecos::Mutex::lock()
 
 void vecos::Mutex::unlock() {
     uint32_t inter_state = vecos::port::save_and_disable_interrupts();
-    if (_owner == current_task_tcb_ptr) {
-        _owner->priority = _owner->base_priority;
+    if(_inheritance_enabled) {
+        if (_owner == current_task_tcb_ptr) {
+            _owner->priority = _owner->base_priority;
+        }
     }
     _owner = nullptr;
     _locked = false;
