@@ -11,8 +11,14 @@
 
 #define TIMER_TICK 1
 
-extern "C" {
-    void PendSV_Handler(void);
+namespace _asm {
+    extern "C" {
+        void PendSV_Handler(void);
+    }
+
+    extern "C" {
+        void start_first_task(TCB **);
+    }
 }
 
 static bool repeating_timer_callback(struct repeating_timer *) {
@@ -32,7 +38,7 @@ void vecos::port::init_hardware_context() {
     uint32_t *vtor_table = (uint32_t *)scb_hw->vtor;
     
     // Case 14 = PendSV (Pendable Service Call)
-    vtor_table[14] = (uint32_t)PendSV_Handler;
+    vtor_table[14] = (uint32_t)_asm::PendSV_Handler;
     
     // Adresse du registre SHPR3 (System Handler Priority Register 3)
     volatile uint32_t *shpr3 = (volatile uint32_t *)0xE000ED20;
@@ -102,4 +108,8 @@ void vecos::port::task_init(void (*task_func_ptr)(void *), void *args, TCB *task
 
 uint64_t vecos::port::get_time_us() {
     return time_us_64();
+}
+
+void vecos::port::start_first_task(TCB **task) {
+    _asm::start_first_task(task);
 }

@@ -47,3 +47,7 @@ void vecos::port::task_init(void (*task_func_ptr)(void *), void *args, TCB *task
 uint64_t vecos::port::get_time_us() {
     return g_fake_time_us;
 }
+
+void vecos::port::start_first_task(TCB **) {
+
+}

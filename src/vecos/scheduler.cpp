@@ -6,10 +6,6 @@
 #include "vecos/scheduler.h"
 #include "vecos/port.h"
 
-extern "C" {
-    void start_first_task(TCB **);
-};
-
 static void vecos_idle_task_fn(void* arg) {
     (void)arg;
     while (true) {
@@ -116,7 +112,7 @@ void vecos::Scheduler::start()
     _current_task_idx = (_task_count > 1) ? 1 : 0;
     current_task_tcb_ptr = _tasks[_current_task_idx]->get_tcb();// get_tcb retourne déjà un * vers un TCB
     vecos::port::init_hardware_context();//init hardware interrupt and ticks timer
-    start_first_task(&current_task_tcb_ptr);
+    port::start_first_task(&current_task_tcb_ptr);
 }
 
 uint16_t vecos::Scheduler::task_count() const
