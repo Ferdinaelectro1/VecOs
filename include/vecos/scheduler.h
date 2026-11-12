@@ -90,6 +90,7 @@ namespace vecos {
         
     
           bool add_task(TaskBase& task);
+          void remove_task(TaskBase &task);
         
           void set_stackOverflowHandler(StackOverflowHandler handler);
     

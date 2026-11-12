@@ -103,3 +103,25 @@ TEST (Scheduler,IdleRunsWhenAllTasksSleep) {
     vTaskSwitchContext();
     EXPECT_EQ(current_task_tcb_ptr,idle_task);
 }
+
+TEST (Scheduler,RemoveTaskTest) {
+    current_task_tcb_ptr = nullptr;
+
+    vecos::Scheduler os;
+    vecos::Task<256> task1([](){});  
+    vecos::Task<256> task2([](){});  
+
+    os.add_task(task1);
+    os.add_task(task2);
+
+    current_task_tcb_ptr = task1.get_tcb();
+    vTaskSwitchContext();
+    EXPECT_EQ(current_task_tcb_ptr,task1.get_tcb());
+    vTaskSwitchContext();
+    EXPECT_EQ(current_task_tcb_ptr,task2.get_tcb());
+    os.remove_task(task1);//We remove task1. Now task2, just is running
+    vTaskSwitchContext();
+    EXPECT_EQ(current_task_tcb_ptr,task2.get_tcb()); 
+    vTaskSwitchContext();
+    EXPECT_EQ(current_task_tcb_ptr,task2.get_tcb());
+}

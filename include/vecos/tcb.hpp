@@ -6,7 +6,7 @@
 #pragma once
 #include <stdint.h>
 
-enum class TaskState { READY,SLEEPING,BLOCKED };
+enum class TaskState { READY,SLEEPING,BLOCKED,REMOVED };
 
 enum class TaskPriority : uint8_t {
   LOW      = 0,

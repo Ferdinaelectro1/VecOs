@@ -134,3 +134,15 @@ void vecos::sleep_task(uint32_t ms)
 {
     sleep_task(::std::chrono::milliseconds(ms));
 }
+
+
+void vecos::Scheduler::remove_task(TaskBase &task) {
+    for (int i=0; i<_task_count; i++) {
+        if (_tasks[i] == &task) {
+            _tasks[i]->get_tcb()->state = TaskState::REMOVED;
+            if (_tasks[i]->get_tcb() == current_task_tcb_ptr) {
+                vecos::port::yield_cpu();
+            }
+        }
+    }
+}
