@@ -14,10 +14,18 @@ set(PICOTOOL_FORCE_FETCH_FROM_GIT ON CACHE BOOL "" FORCE)
 
 pico_sdk_init()
 
-set(PLATFORM_CODE  src/ports/rp2040/port.cpp
+if (PICO_PLATFORM STREQUAL "rp2040") 
+    message(STATUS "Building for RP2040 platform")
+    set(PLATFORM_CODE  src/ports/rp2040/port.cpp
                    src/ports/rp2040/init.S
                     src/ports/rp2040/context_switch.S
     )
+elseif (PICO_PLATFORM MATCHES "^rp2350")
+    message(STATUS "Building for RP2350 platform")
+    set(PLATFORM_CODE  src/ports/rp2350/port.cpp)
+else()
+    message(FATAL_ERROR "Unsupported platform: ${PICO_PLATFORM}. Only RP2040 or rp2350 is supported.")
+endif()
 
 # ── La bibliothèque vecos ──────────────────────────────────────
 add_library(vecos STATIC
