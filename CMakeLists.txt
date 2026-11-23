@@ -16,13 +16,16 @@ pico_sdk_init()
 
 if (PICO_PLATFORM STREQUAL "rp2040") 
     message(STATUS "Building for RP2040 platform")
-    set(PLATFORM_CODE  src/ports/rp2040/port.cpp
-                   src/ports/rp2040/init.S
-                    src/ports/rp2040/context_switch.S
+    set(PLATFORM_CODE  src/ports/rpxxx/rp2040/port.cpp
+                   src/ports/rpxxx/common/init.S
+                    src/ports/rpxxx/common/context_switch.S
     )
 elseif (PICO_PLATFORM MATCHES "^rp2350")
     message(STATUS "Building for RP2350 platform")
-    set(PLATFORM_CODE  src/ports/rp2350/port.cpp)
+    set(PLATFORM_CODE  src/ports/rpxxx/rp2350/port.cpp
+                    src/ports/rpxxx/common/init.S
+                    src/ports/rpxxx/common/context_switch.S
+    )
 else()
     message(FATAL_ERROR "Unsupported platform: ${PICO_PLATFORM}. Only RP2040 or rp2350 is supported.")
 endif()
