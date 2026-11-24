@@ -28,7 +28,9 @@ jobs:
       - name: Build firmware
         run: |
           cmake -S . -B build -DPICO_BOARD=pico
+          cmake -S . -B build-rp2350 -DPICO_BOARD=pico2
           cmake --build build -j
+          cmake --build build-rp2350 -j
           cmake -S tests -B build-tests
           cmake --build build-tests -j
 
