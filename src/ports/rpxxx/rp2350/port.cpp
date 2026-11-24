@@ -104,6 +104,6 @@ uint64_t vecos::port::get_time_us() {
     return time_us_64();
 }
 
-void vecos::port::start_first_task(TCB **) {
-
+void vecos::port::start_first_task(TCB ** task) {
+    _asm::start_first_task(task);
 }
